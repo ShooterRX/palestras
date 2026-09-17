@@ -34,7 +34,7 @@ Aqui estão disponíveis os slides utilizados em eventos, conferências e encont
   * 🎤 *Operação Red Team, do Zero ao Domain Admin*
   * 📁 [Acessar materiais](./MindTheSec2023/)
 
-### 🎓 Outros eventos
+### 🎓 2022
 
 * **Palestra em universidade - Uniciv/Vincit/Facint**
 
