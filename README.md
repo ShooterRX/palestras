@@ -103,7 +103,7 @@ Sou **Lucas Farias**, profissional de Cibersegurança com experiência em **Red 
 
 Este repositório também funciona como um registro das palestras e conteúdos técnicos que venho compartilhando com a comunidade de segurança.
 
-🔗 LinkedIn: linkedin.com/in/lucas-fp
+🔗 LinkedIn: https://www.linkedin.com/in/lucas-fp/
 
 ---
 
