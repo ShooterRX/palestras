@@ -74,7 +74,24 @@ palestras/
 ├── Unicv-Vincit/
 │
 └── README.md
+
 ```
+
+## 🎥 Vídeos & Conteúdos
+
+Além dos slides disponibilizados neste repositório, alguns dos conteúdos e apresentações também estão disponíveis em vídeo.
+
+### 🎤 Palestras
+
+Playlist com gravações de palestras e apresentações realizadas em eventos e comunidades de tecnologia e cibersegurança.
+
+▶️ **[Assistir às palestras no YouTube](https://www.youtube.com/watch?v=NACW_5mJX7c&list=PLUVUe5TTJHxFwCPZ2WKStoYo2mZEDWSfQ)**
+
+### 🔴 Exploração de Vulnerabilidades
+
+Playlist com vídeos e demonstrações práticas relacionados à **exploração de vulnerabilidades, Ethical Hacking e Segurança Ofensiva**.
+
+▶️ **[Assistir aos vídeos de exploração de vulnerabilidades](https://www.youtube.com/watch?v=033Da6XuNcI&list=PLUVUe5TTJHxHVTXQUrD6EdgdbZMDAc0Ze)**
 
 Os diretórios podem conter os **slides**, imagens, materiais complementares e outros arquivos utilizados durante as apresentações.
 
@@ -85,6 +102,8 @@ Os diretórios podem conter os **slides**, imagens, materiais complementares e o
 Sou **Lucas Farias**, profissional de Cibersegurança com experiência em **Red Team, Pentest e Segurança Ofensiva**.
 
 Este repositório também funciona como um registro das palestras e conteúdos técnicos que venho compartilhando com a comunidade de segurança.
+
+🔗 LinkedIn: linkedin.com/in/lucas-fp
 
 ---
 
